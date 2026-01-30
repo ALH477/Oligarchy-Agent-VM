@@ -1,0 +1,51 @@
+# Full GUI + SSH + Docker
+# Include standard packages
+base
+base-devel
+linux
+linux-firmware
+neovim
+git
+curl
+wget
+htop
+btop
+ripgrep
+fd
+openssh
+sudo
+systemd
+networkmanager
+python
+python-pip
+python-virtualenv
+tmux
+docker
+docker-compose
+nodejs
+npm
+rust
+go
+java-runtime
+asciinema
+screen
+
+# GUI support
+xorg-server
+xorg-xinit
+wayland
+weston
+gtk4
+libadwaita
+cairo
+pango
+glib
+gdk-pixbuf
+
+# Development GUI tools
+gnome-terminal
+nautilus
+gedit
+
+# Browser for documentation access
+firefox

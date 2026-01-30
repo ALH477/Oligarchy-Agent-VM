@@ -25,26 +25,44 @@ Oligarchy AgentVM provides a sandboxed environment where AI coding agents (aider
 - **Multiple UIs**: GTK4 Wayland native UI and Godot/Redot plugin
 - **Reproducible**: NixOS flake ensures identical builds
 
+## System Options
+
+Oligarchy AgentVM now supports two base systems:
+
+### 🔄 NixOS (Declarative)
+- **Package Manager**: Nix (declarative, reproducible)
+- **Release Model**: Controlled releases
+- **Setup**: `nix build .#nixos-agent-vm-qcow2 && nix run .#nixos-run`
+- **Best for**: Maximum reproducibility, controlled environments
+
+### 🐧 Arch Linux (Pacman + AUR)
+- **Package Manager**: pacman + AUR (latest packages, extensive choice)
+- **Release Model**: Rolling release
+- **Setup**: `nix run .#arch-build-vm && nix run .#arch-run`
+- **Best for**: Latest software, flexibility, AUR access
+
 ## Quick Start
 
 ### Prerequisites
 
-- NixOS or any system with Nix package manager (with flakes enabled)
+- Nix (for build scripts) or direct script execution
 - QEMU/KVM for virtualization
-- Approximately 10GB disk space for VM image
+- **NixOS**: 10GB disk space
+- **Arch Linux**: 15GB disk space (ISO + disk)
 
-### Installation
+### Installation - Choose Your System
 
+#### 🔄 Option 1: NixOS (Recommended for production)
 ```bash
 # Clone the repository
 git clone https://github.com/ALH477/Oligarchy-Agent-VM.git
 cd Oligarchy-Agent-VM
 
 # Build the VM image
-nix build .#agent-vm-qcow2
+nix build .#nixos-agent-vm-qcow2
 
 # Launch the VM with automatic port forwarding
-nix run .#run
+nix run .#nixos-run
 
 # In a separate terminal, connect via SSH
 ssh user@127.0.0.1 -p 2222
@@ -52,6 +70,59 @@ ssh user@127.0.0.1 -p 2222
 
 # Access API documentation
 curl http://127.0.0.1:8000/docs
+```
+
+#### 🐧 Option 2: Arch Linux (Latest packages, AUR)
+```bash
+# Clone the repository
+git clone https://github.com/ALH477/Oligarchy-Agent-VM.git
+cd Oligarchy-Agent-VM
+
+# Build and launch Arch Linux VM
+nix run .#arch-build-vm
+nix run .#arch-run
+
+# Follow on-screen instructions, then connect via SSH
+ssh agent@127.0.0.1 -p 2222
+
+# Access API documentation
+curl http://127.0.0.1:8000/docs
+```
+
+### System Comparison
+
+| Feature | NixOS | Arch Linux |
+|---------|---------|------------|
+| **Package Manager** | Nix (declarative) | pacman + AUR (imperative) |
+| **Release Model** | Controlled | Rolling (latest) |
+| **Reproducibility** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ |
+| **Package Availability** | Good | Excellent (AUR) |
+| **Setup Complexity** | Higher | Lower |
+| **System Size** | Larger | Smaller |
+| **Update Frequency** | Less frequent | Continuous |
+| **Configuration** | Declarative | Scripts + config files |
+
+Both systems provide **identical API functionality** and **agent compatibility**.
+
+### 📚 Documentation
+
+- **NixOS Guide**: This document (below)
+- **Arch Linux Guide**: See `arch-vm/README.md` for detailed Arch Linux setup
+- **System Selection**: Run `./select-system.sh` for interactive system choice
+- **Examples**: `docs/EXAMPLES.md` (works with both systems)
+- **Troubleshooting**: `docs/TROUBLESHOOTING.md` (covers both systems)
+
+### 🎯 Quick System Selection
+
+```bash
+# Interactive system selection (recommended)
+./select-system.sh
+
+# Direct NixOS setup
+./select-system.sh --nixos
+
+# Direct Arch Linux setup
+./select-system.sh --arch
 ```
 
 ## Architecture
@@ -97,37 +168,35 @@ Oligarchy-Agent-VM/
 ├── flake.lock                   # Locked dependencies
 ├── README.md                    # This file
 ├── LICENSE                      # Project license
+├── CHANGELOG.md                 # Version history and changes
+├── CODE_OF_CONDUCT.md           # Community guidelines
+├── CONTRIBUTING.md              # Contribution guidelines
+├── SECURITY.md                  # Security policies
 │
 ├── docs/
-│   ├── EXAMPLES.md              # Usage examples and workflows
+│   └── EXAMPLES.md              # Usage examples and workflows
 │   └── TROUBLESHOOTING.md       # Common issues and solutions
+│
+├── agent-system/                # DeMoD Agent System subdirectory
+│   ├── flake.nix               # Agent system flake
+│   ├── README.md               # Agent system documentation
+│   ├── src/                    # Source code
+│   ├── configs/                # Configuration files
+│   ├── deployment/             # Deployment configurations
+│   ├── infrastructure/         # Infrastructure setup
+│   └── ui/                     # User interfaces
 │
 ├── ui/
 │   ├── wayland/
-│   │   ├── agentvm_ui.py        # GTK4 Wayland UI
-│   │   ├── agentvm-ui.nix       # Nix package for UI
-│   │   ├── shell.nix            # Development environment
-│   │   ├── test-ui.sh           # Quick test launcher
-│   │   ├── ui-mockup.html       # Visual mockup
-│   │   └── UI-README.md         # UI documentation
-│   │
+│   │   └── (UI development files)
 │   └── godot/
-│       ├── plugin.cfg           # Godot plugin metadata
-│       ├── plugin.gd            # Main plugin script
-│       ├── config.ini           # Default configuration
-│       ├── core/
-│       │   └── agent_manager.gd # API communication manager
-│       ├── ui/
-│       │   ├── agent_dock.gd    # Main dock panel
-│       │   ├── agent_dock.tscn  # Dock scene
-│       │   ├── bottom_panel.gd  # Output panel
-│       │   └── bottom_panel.tscn # Output scene
-│       ├── install-godot-plugin.sh  # Automated installer
-│       ├── GODOT-README.md      # Plugin documentation
-│       └── PLUGIN-STRUCTURE.md  # Directory guide
+│       └── (Godot plugin files)
 │
-└── tools/
-    └── agent_vm_client.py       # Python client library
+├── tools/
+│   └── agent_vm_client.py      # Python client library
+│
+├── tests/                       # Test files
+└── .github/                     # GitHub workflows and templates
 ```
 
 ## Configuration
@@ -538,7 +607,19 @@ For bugs, open an issue with:
 
 ## License
 
-MIT License. See LICENSE file for details.
+**Main Project (Oligarchy AgentVM)**: MIT License. See LICENSE file for details.
+
+**Agent System Subdirectory**: The `agent-system/` directory contains the DeMoD Agent System, which is licensed under BSD 3-Clause License. See `agent-system/LICENSE` for details.
+
+### Licensing Summary
+
+- **Oligarchy AgentVM** (root directory): MIT License
+- **DeMoD Agent System** (`agent-system/`): BSD 3-Clause License
+- **Third-party dependencies**: Each library maintains its own license
+
+This dual-license structure allows:
+- The core AgentVM to be widely used under permissive MIT terms
+- The enterprise agent management system to maintain BSD licensing for commercial use
 
 ## Acknowledgments
 

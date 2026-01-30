@@ -356,6 +356,20 @@ We welcome contributions! Please see our contributing guidelines:
 
 This project is licensed under the BSD 3-Clause License. See the [LICENSE](LICENSE) file for the full license text.
 
+### Relationship to Main Project
+
+The DeMoD Agent System is a component of the larger Oligarchy AgentVM project. While the main AgentVM uses MIT licensing, this agent management system uses BSD 3-Clause licensing to accommodate enterprise deployment requirements.
+
+**Usage Rights:**
+- Commercial use allowed
+- Modification allowed
+- Distribution allowed
+- Patent grant included
+- Must include license and copyright notice
+- Cannot use contributor names for endorsement
+
+For integration with the main AgentVM, see the parent directory documentation.
+
 ## Acknowledgments
 
 Built by DeMoD LLC with contributions from the open-source community.

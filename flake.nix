@@ -1,11 +1,12 @@
 {
   description = ''
-    Oligarchy AgentVM — Production-Ready NixOS VM for AI-Assisted Coding
+    Oligarchy AgentVM — Production-Ready VM for AI-Assisted Coding
     
     A lightweight, secure, and API-driven development environment optimized for
-    AI coding agents. Designed for isolation, reproducibility, and extensibility.
+    AI coding agents. Supports both NixOS (declarative) and Arch Linux (pacman) base systems.
     
     Key Features:
+    - Dual System Support: Choose between NixOS or Arch Linux
     - Headless-first design with optional GUI
     - Pre-installed AI agents: aider, opencode, claude-code
     - FastAPI controller for programmatic agent orchestration
@@ -14,12 +15,21 @@
     - Virtiofs host-to-VM project directory sharing
     - CPU pinning support for real-time host workloads
     - Comprehensive Neovim setup with LSP and Treesitter
+    - Production-ready with security hardening
     
-    Usage:
-      nix build .#agent-vm-qcow2        # Build VM image
-      nix run .#run                      # Launch VM with forwarded ports
-      ssh user@127.0.0.1 -p 2222         # Connect to VM
-      curl http://127.0.0.1:8000/docs    # Explore API
+    Usage (NixOS):
+      nix build .#nixos-agent-vm-qcow2   # Build NixOS VM image
+      nix run .#nixos-run                # Launch NixOS VM
+    
+    Usage (Arch Linux):
+      nix run .#arch-build-vm             # Build Arch Linux VM
+      nix run .#arch-run                  # Launch Arch Linux VM
+      ./arch-vm/scripts/build-vm.sh        # Direct Arch Linux build
+    
+    System Selection:
+      - NixOS: Maximum reproducibility, declarative configuration
+      - Arch Linux: Latest packages, pacman + AUR access
+      - Both: Identical functionality and API
   '';
 
   inputs = {
@@ -1089,6 +1099,75 @@
         echo "  🧪 Test API:"
         echo "     curl -H 'X-API-Key: change-this-in-production-2026' \\"
         echo "          http://127.0.0.1:8000/health"
+        echo ""
+      '';
+
+    # ═══════════════════════════════════════════════════════════════
+    # Arch Linux VM Support
+    # ═══════════════════════════════════════════════════════════════
+
+    # Arch Linux VM Build Script
+    packages.${system}.arch-build-vm = pkgs.writeShellScriptBin "arch-build-vm" ''
+      set -euo pipefail
+      cd ${./arch-vm}
+      exec ./scripts/build-vm.sh
+    '';
+
+    # Arch Linux VM Launch Application
+    apps.${system}.arch-run = {
+      type = "app";
+      program = toString (pkgs.writeShellScript "arch-run" ''
+        set -euo pipefail
+        ${pkgs.qemu}/bin/qemu-system-x86_64 \
+          -M q35 \
+          -cpu host \
+          -smp 6 \
+          -m 8192 \
+          -drive file=${./arch-vm/disks/agentvm-arch.qcow2},format=qcow2,if=virtio,cache=none \
+          -net nic,model=virtio \
+          -net user,hostfwd=tcp::2222-:22,hostfwd=tcp::8000-:8000 \
+          -device virtio-gpu-pci \
+          -display none \
+          -enable-kvm \
+          -nographic \
+          "$@"
+      '');
+    };
+
+    # Arch Linux Development Environment
+    devShells.${system}.arch-dev = pkgs.mkShell {
+      name = "Arch Linux AgentVM Development";
+      packages = with pkgs; [
+        qemu
+        virt-viewer
+        netcat
+        wget
+        curl
+        git
+      ];
+      
+      shellHook = ''
+        echo ""
+        echo "╔═══════════════════════════════════════════════════════════╗"
+        echo "║      Arch Linux AgentVM Development Environment          ║"
+        echo "╚═══════════════════════════════════════════════════════════╝"
+        echo ""
+        echo "Available commands:"
+        echo ""
+        echo "  📦 Build Arch Linux VM:"
+        echo "     nix run .#arch-build-vm"
+        echo ""
+        echo "  🚀 Launch Arch Linux VM:"
+        echo "     nix run .#arch-run"
+        echo ""
+        echo "  🔌 Connect to VM:"
+        echo "     ssh agent@127.0.0.1 -p 2222"
+        echo ""
+        echo "  📡 API Documentation:"
+        echo "     http://127.0.0.1:8000/docs"
+        echo ""
+        echo "  🧪 Test API:"
+        echo "     curl http://127.0.0.1:8000/health"
         echo ""
       '';
     };

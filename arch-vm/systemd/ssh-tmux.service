@@ -1,0 +1,19 @@
+[Unit]
+Description=SSH Session Manager with Automatic tmux
+Documentation=https://github.com/ALH477/Oligarchy-Agent-VM
+After=sshd.service
+Before=user@1000.service
+
+[Service]
+Type=oneshot
+User=agent
+Group=agent
+Environment=HOME=/home/agent
+Environment=SHELL=/bin/bash
+
+# Setup SSH environment with tmux wrapper
+ExecStart=/opt/agentvm/ssh-tmux-wrapper.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

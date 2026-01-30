@@ -1,0 +1,11 @@
+[Unit]
+Description=Run Cleanup Script Daily
+Documentation=https://github.com/ALH477/Oligarchy-Agent-VM
+
+[Timer]
+OnCalendar=daily
+Persistent=true
+RandomizedDelaySec=1h
+
+[Install]
+WantedBy=timers.target

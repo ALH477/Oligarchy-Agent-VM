@@ -1,0 +1,23 @@
+# Minimal SSH Only
+base
+base-devel
+linux
+linux-firmware
+neovim
+git
+curl
+wget
+htop
+btop
+ripgrep
+fd
+openssh
+sudo
+systemd
+networkmanager
+podman
+podman-compose
+python
+python-pip
+python-virtualenv
+tmux

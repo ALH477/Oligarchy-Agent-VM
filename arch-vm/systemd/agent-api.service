@@ -1,0 +1,38 @@
+[Unit]
+Description=Oligarchy AgentVM API Service
+Documentation=https://github.com/ALH477/Oligarchy-Agent-VM
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=agent
+Group=agent
+WorkingDirectory=/home/agent/agent-api
+Environment=PATH=/home/agent/agent-env/bin:/usr/local/bin:/usr/bin
+Environment=PYTHONPATH=/home/agent/agent-api
+Environment=AGENT_ENV=production
+
+# Virtual environment activation
+ExecStart=/home/agent/agent-env/bin/uvicorn main:app --host 0.0.0.0 --port 8000 --no-access-log
+
+# Security hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/home/agent/agent-api /home/agent/agent-env
+
+# Resource limits
+MemoryLimit=2G
+CPUQuota=50%
+Restart=always
+RestartSec=5s
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=agentvm-api
+
+[Install]
+WantedBy=multi-user.target

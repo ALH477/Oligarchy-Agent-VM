@@ -1,0 +1,21 @@
+[Unit]
+Description=Clean Up Old Asciinema Recordings
+Documentation=https://github.com/ALH477/Oligarchy-Agent-VM
+Wants=local-fs.target
+
+[Service]
+Type=oneshot
+User=agent
+Group=agent
+Environment=RECORDING_DIR=/home/agent/ssh-recordings
+Environment=RETENTION_DAYS=30
+
+# Clean up recordings older than retention period
+ExecStart=/usr/bin/find $RECORDING_DIR -name '*.cast' -mtime +$RETENTION_DAYS -delete
+
+# Security
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=timers.target
