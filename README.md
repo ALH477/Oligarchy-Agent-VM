@@ -1,8 +1,8 @@
 # Oligarchy AgentVM
 
-**Production-Ready NixOS VM for AI-Assisted Development**
+**Enterprise-Grade Production Infrastructure with AI-Assisted Development**
 
-A lightweight, secure, and API-driven development environment optimized for AI coding agents. Built with NixOS for complete reproducibility and isolation.
+A comprehensive NixOS VM with production-grade monitoring, backup, and recovery infrastructure. Built with NixOS for complete reproducibility, isolation, and enterprise operations support.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![NixOS](https://img.shields.io/badge/NixOS-25.05-blue.svg)](https://nixos.org)
@@ -557,14 +557,52 @@ MIT License. See LICENSE file for details.
 
 **Active Development** - Production-ready for individual use. Enterprise features planned.
 
-### Roadmap
+### Recent Updates
+✅ **Production Infrastructure Added** (v2.0):
+  - Complete monitoring stack (Prometheus, Grafana, AlertManager)
+  - Centralized logging (Loki + Promtail)
+  - Automated database backup with point-in-time recovery
+  - Configuration management and version control
+  - Health monitoring and alerting
+  - Production deployment automation
 
+### Roadmap
+- Distributed tracing with OpenTelemetry/Jaeger
+- Multi-region backup strategy
 - Cloud deployment configurations
 - Multi-tenant support
 - Web-based UI (in addition to GTK4)
 - VS Code extension
 - Enhanced monitoring and metrics
 - Integration tests suite
+
+## Production Infrastructure
+
+The DeMoD AgentVM now includes enterprise-grade production infrastructure:
+
+### Quick Deploy Production Stack
+```bash
+# Deploy complete monitoring and backup infrastructure
+cd agent-system
+./infrastructure/deploy_infrastructure.sh full
+
+# Access monitoring dashboards
+# Grafana: http://localhost:3000 (admin/admin)
+# Prometheus: http://localhost:9090
+# AlertManager: http://localhost:9093
+```
+
+### Production Components
+- **Monitoring**: Prometheus + Grafana + AlertManager
+- **Logging**: Loki + Promtail with structured JSON logging
+- **Backup**: Automated PostgreSQL backup with point-in-time recovery
+- **Alerting**: PagerDuty, Slack, and email notifications
+- **Configuration**: Version-controlled with automated deployment
+
+### Production Documentation
+- See `INFRASTRUCTURE_IMPLEMENTATION.md` for detailed deployment guide
+- Monitoring dashboards automatically imported and configured
+- Backup schedules automatically configured (daily/weekly/monthly)
 
 ## Support
 
